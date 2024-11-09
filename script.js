@@ -27,4 +27,21 @@ var gitty = (module.exports = {
       process.cwd(),
     )
   },
+
+  add: function (path, _) {
+    files.assertInRepo()
+    config.assertNotBare()
+
+    var addedFiles = files.isRecursive(path)
+
+    if (addedFiles.length === 0) {
+      throw new Error(
+        FileSystem.pathFromRepoRoot(path) + 'did not match any files',
+      )
+    } else {
+      addedFiles.forEach(function (p) {
+        gitty.update_index(p, { add: true })
+      })
+    }
+  },
 })
