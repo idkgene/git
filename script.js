@@ -137,4 +137,25 @@ var gitty = (module.exports = {
       }
     }
   },
+
+  branch: function(name, opts) {
+    files.assertInRepo();
+    opts = opts || {};
+
+    if (name === undefined) {
+      return Object.keys(refs.localHeads()).map(function(branch) {
+        return (branch === refs.headBranchName() ? "* " : "  ") + branch;
+      }).join("\n") + "\n";
+
+    } else if (refs.hash("HEAD") === undefined) {
+      throw new Error(refs.headBranchName() + " not a valid object name");
+
+    } else if (refs.exists(refs.toLocalRef(name))) {
+      throw new Error("A branch named " + name + " already exists");
+
+    } else {
+      gitlet.update_ref(refs.toLocalRef(name), refs.hash("HEAD"));
+    }
+  },
+
 });
